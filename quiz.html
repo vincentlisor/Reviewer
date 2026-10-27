@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Reviewer — Jazzi Reviewer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="back" href="index.html" aria-label="Back to subjects">← <span>Subjects</span></a>
+    <div id="subjTitle" class="topbar-title"></div>
+    <div class="topbar-actions">
+      <button id="retryBtn" class="btn small ghost">↻ Retry</button>
+      <button id="finishBtn" class="btn small">Results</button>
+      <button id="themeBtn" class="icon-btn" aria-label="Toggle theme">🌙</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap quiz" id="app">
+  <p class="muted center">Loading…</p>
+</main>
+
+<dialog id="results" class="modal">
+  <div id="resultsBody"></div>
+  <div class="modal-actions">
+    <button class="btn ghost" id="resetAll">Retry quiz</button>
+    <button class="btn" id="closeResults">Keep reviewing</button>
+  </div>
+</dialog>
+
+<dialog id="confirmModal" class="modal confirm" aria-labelledby="cfTitle" aria-describedby="cfText">
+  <div class="cf-icon" id="cfIcon" aria-hidden="true">↻</div>
+  <h2 id="cfTitle"></h2>
+  <p id="cfText" class="muted"></p>
+  <ul id="cfList" class="cf-list"></ul>
+  <div class="modal-actions">
+    <button class="btn ghost" id="cfCancel" type="button">Cancel</button>
+    <button class="btn" id="cfOk" type="button"></button>
+  </div>
+</dialog>
+
+<script src="common.js"></script>
+<script src="quiz.js"></script>
+</body>
+</html>

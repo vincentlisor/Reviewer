@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Jazzi Reviewer — NCM 106 Review Hub</title>
+<meta name="description" content="Practice-based pharmacology reviewer: multiple choice, identification, enumeration and situational questions.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="wrap topbar-in">
+    <a class="brand" href="index.html"><span class="brand-mark">JR</span><span>Jazzi Reviewer</span></a>
+    <button id="themeBtn" class="icon-btn" aria-label="Toggle theme">🌙</button>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="hero">
+    <p class="eyebrow">NCM 106 · Pharmacology</p>
+    <h1>Pick a subject.<br>Start reviewing.</h1>
+    <p class="lead">Each reviewer has multiple choice, identification, enumeration and situational questions — with instant feedback and an explanation for every answer.</p>
+    <div class="search"><input id="search" type="search" placeholder="Search subjects or topics…" aria-label="Search subjects"></div>
+    <div class="rnd-box">
+      <label class="switch" for="rndToggle">
+        <input type="checkbox" id="rndToggle">
+        <span class="slider" aria-hidden="true"></span>
+        <span class="switch-text"><b>🔀 Randomize questions</b><small id="rndHint"></small></span>
+      </label>
+    </div>
+  </section>
+
+  <section id="cards" class="cards" aria-live="polite"></section>
+  <p id="empty" class="muted center" hidden>No subjects match your search.</p>
+</main>
+
+<footer class="foot wrap">
+  <p>Built from your NCM 106 reviewer slides. Progress is saved on this device only.</p>
+</footer>
+
+<script src="common.js"></script>
+<script src="home.js"></script>
+</body>
+</html>
