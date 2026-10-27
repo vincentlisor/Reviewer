@@ -234,33 +234,169 @@
       }));
     }
 
+    function describeClassificationItem(groupLabel, item) {
+      const name = String(item || "").split("|")[0].trim();
+      const lower = name.toLowerCase();
+      const labelLower = String(groupLabel || "").toLowerCase();
+
+      const genericMap = {
+        thiazide: "Thiazides reduce sodium and water reabsorption in the early distal tubule, helping lower blood pressure and reduce edema.",
+        loop: "Loop diuretics act in the loop of Henle and are strong drugs used for rapid fluid removal in edema and heart failure.",
+        "carbonic anhydrase inhibitors": "Carbonic anhydrase inhibitors reduce bicarbonate reabsorption, helping lower intraocular pressure and manage altitude sickness.",
+        "potassium-sparing": "Potassium-sparing diuretics help the body excrete sodium while retaining potassium, which is useful in heart failure and hypertension.",
+        osmotic: "Osmotic diuretics pull fluid into the renal tubules and bloodstream, reducing intracranial and intraocular pressure.",
+        vasodilators: "Vasodilators widen blood vessels to reduce preload and afterload, improving blood flow and lowering blood pressure.",
+        diuretics: "Diuretics help remove excess sodium and water, reducing swelling and lowering blood pressure.",
+        "beta blockers": "Beta blockers slow heart rate and decrease cardiac workload, helping with angina, heart failure, and hypertension.",
+        "beta-1": "Beta-1 blockers mainly act on the heart to slow the heart rate and reduce contractility.",
+        "beta-2": "Beta-2 blockers affect bronchial smooth muscle and can be important in patients with asthma or lung disease.",
+        "alpha-1 blockers": "Alpha-1 blockers relax vascular smooth muscle, reducing blood pressure and easing urinary obstruction in BPH.",
+        "alpha-1 blocker": "Alpha-1 blockers relax vascular smooth muscle and the bladder neck, improving urine flow and blood pressure control.",
+        statins: "Statins inhibit cholesterol synthesis in the liver, lowering low-density lipoprotein and reducing cardiovascular risk.",
+        "cholesterol absorption inhibitors": "Cholesterol absorption inhibitors reduce absorption of dietary cholesterol in the intestine to lower LDL levels.",
+        "bile acid sequestrants": "Bile acid sequestrants bind bile acids in the gut, forcing the liver to use more cholesterol and lower LDL.",
+        fibrates: "Fibrates lower triglycerides and help raise HDL cholesterol, especially in patients with hypertriglyceridemia.",
+        "pcsk9 inhibitors": "PCSK9 inhibitors block LDL receptor breakdown, increasing LDL clearance and substantially lowering cholesterol levels.",
+        "ace inhibitors": "ACE inhibitors prevent angiotensin II formation, causing vasodilation and sodium and water loss to lower blood pressure.",
+        "arbs": "ARBs block angiotensin II receptors, lowering blood pressure and reducing pressure on the heart and kidneys.",
+        "calcium channel blockers": "Calcium channel blockers relax smooth muscle and reduce cardiac contraction, helping control blood pressure and angina.",
+        "centrally acting alpha-2 agonists": "Central alpha-2 agonists reduce sympathetic outflow, lowering blood pressure and heart rate.",
+        "direct vasodilators": "Direct vasodilators relax blood vessel smooth muscle to rapidly lower blood pressure or relieve vascular spasm.",
+        "catecholamines": "Catecholamines stimulate adrenergic receptors and are used to support heart function or raise blood pressure in shock.",
+        "cardiac glycosides": "Cardiac glycosides improve heart contraction and slow the heart rate, which helps in heart failure and atrial fibrillation.",
+        "phosphodiesterase inhibitors": "Phosphodiesterase inhibitors increase cardiac contractility and are used for short-term support in heart failure.",
+        "nitrates": "Nitrates dilate veins and coronary arteries, reducing oxygen demand and relieving angina.",
+        "urinary anti-infectives": "Urinary anti-infectives help clear bacteria from the urinary tract and reduce symptoms of infection.",
+        "urinary antispasmodics": "Urinary antispasmodics relax the detrusor muscle to reduce bladder spasms and urgency.",
+        "5-alpha reductase inhibitors": "5-alpha reductase inhibitors block conversion of testosterone to DHT, shrinking the prostate and improving urine flow.",
+        "alpha-adrenergic blockers": "Alpha-adrenergic blockers relax the smooth muscle of the bladder neck and prostate, improving urine flow in BPH.",
+        "bladder protectants": "Bladder protectants coat and protect the urinary lining, reducing irritation and pain in interstitial cystitis.",
+        "urinary tract analgesics": "Urinary tract analgesics relieve pain and burning in the urinary tract while the infection is being treated."
+      };
+
+      for (const [key, text] of Object.entries(genericMap)) {
+        if (labelLower.includes(key) || lower.includes(key)) return text;
+      }
+
+      if (lower.includes("thiazide")) return genericMap.thiazide;
+      if (lower.includes("loop")) return genericMap.loop;
+      if (lower.includes("carbonic") || lower.includes("anhydrase")) return genericMap["carbonic anhydrase inhibitors"];
+      if (lower.includes("potassium") || lower.includes("spironolactone") || lower.includes("triamterene") || lower.includes("amiloride")) return genericMap["potassium-sparing"];
+      if (lower.includes("osmotic") || lower.includes("mannitol")) return genericMap.osmotic;
+      if (lower.includes("vasodilator")) return genericMap.vasodilators;
+      if (lower.includes("diuretic")) return genericMap.diuretics;
+      if (lower.includes("beta") && lower.includes("blocker")) return genericMap["beta blockers"];
+      if (lower.includes("alpha") && lower.includes("blocker")) return genericMap["alpha-1 blockers"];
+      if (lower.includes("statin")) return genericMap.statins;
+      if (lower.includes("ezetimibe") || lower.includes("absorption")) return genericMap["cholesterol absorption inhibitors"];
+      if (lower.includes("bile")) return genericMap["bile acid sequestrants"];
+      if (lower.includes("fibrate")) return genericMap.fibrates;
+      if (lower.includes("pcsk9") || lower.includes("monoclonal")) return genericMap["pcsk9 inhibitors"];
+      if (lower.includes("ace") || lower.includes("captopril") || lower.includes("lisinopril")) return genericMap["ace inhibitors"];
+      if (lower.includes("arb") || lower.includes("sartan")) return genericMap.arbs;
+      if (lower.includes("calcium") || lower.includes("channel")) return genericMap["calcium channel blockers"];
+      if (lower.includes("nitrate") || lower.includes("nitroglycerin")) return genericMap.nitrates;
+      if (lower.includes("digoxin") || lower.includes("milrinone")) return genericMap["cardiac glycosides"];
+      if (lower.includes("finasteride") || lower.includes("dutasteride") || lower.includes("5-alpha")) return genericMap["5-alpha reductase inhibitors"];
+      if (lower.includes("tamsulosin") || lower.includes("alfuzosin") || lower.includes("silodosin")) return genericMap["alpha-adrenergic blockers"];
+      return "This group includes the major drug examples used to manage the condition and should be reviewed together as a set.";
+    }
+
+    function buildTypeGroups(subj) {
+      const wordMap = { one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
+      const groups = [];
+      const seen = new Set();
+
+      (subj.enumer || []).forEach((entry) => {
+        const question = String(entry[0] || "");
+        const items = Array.isArray(entry[1]) ? entry[1] : [];
+        const explanation = String(entry[2] || "").trim();
+        if (!items.length) return;
+
+        const match = question.match(/(?:\b(?:one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+)?(?:type|types|class|classes|group|groups|kind|kinds|category|categories)\s+(?:of|for)\s+(.+?)(?:\s+in\s+|\s+the\s+|\.|$)/i);
+        if (!match) return;
+
+        const rawLabel = match[1].trim();
+        if (!rawLabel || rawLabel.length > 80) return;
+
+        const countMatch = question.match(/\b(one|two|three|four|five|six|seven|eight|nine|ten|\d+)\s+(?:type|types|class|classes|group|groups|kind|kinds|category|categories)\b/i);
+        const count = countMatch ? (wordMap[countMatch[1].toLowerCase()] || Number.parseInt(countMatch[1], 10) || items.length) : items.length;
+        const title = rawLabel.replace(/\s+(?:in|the|reviewer|figure|pdf).*$/i, "").trim();
+        const label = `${count} ${count === 1 ? (question.toLowerCase().includes("class") ? "class" : "type") : (question.toLowerCase().includes("class") ? "classes" : "types")} of ${title}`;
+        const key = `${label}|${items.slice(0, count).map((x) => String(x).split("|")[0]).join("|")}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+
+        groups.push({
+          label,
+          items: items.slice(0, count).map((x) => {
+            const name = String(x).split("|")[0].trim();
+            return {
+              name,
+              description: describeClassificationItem(label, name)
+            };
+          }),
+          explanation: explanation || "These are the main categories to review for this topic."
+        });
+      });
+
+      return groups.slice(0, 6);
+    }
+
     function renderReviewerView() {
       const sections = SECTIONS.filter((s) => (subj[s.key] || []).length);
+      const typeGroups = buildTypeGroups(subj);
+      const allRows = sections.flatMap((sec) =>
+        (subj[sec.key] || []).map((it, idx) => {
+          const term = sec.type === "choice"
+            ? String(it[1]).split("|")[0]
+            : sec.type === "text"
+              ? String(it[1]).split("|")[0]
+              : Array.isArray(it[1])
+                ? it[1].map((x) => String(x).split("|")[0]).join(", ")
+                : String(it[1]).split("|")[0];
+          const meaning = sec.key === "sit"
+            ? applySituationalNames((it[3] || it[2] || ""), idx)
+            : (it[3] || it[2] || "");
+          return { term, meaning };
+        })
+      );
+
       app.innerHTML = `
         <div class="panel reviewer-header">
           <div class="panel-h"><b>Reviewer</b></div>
-          <p class="muted">${esc(subj.title)} — key terms and plain-language explanations.</p>
+          <p class="muted">${esc(subj.title)} — concise study notes and explanations.</p>
           <button class="btn ghost" id="exitReviewerBtn" type="button">← Back to quiz</button>
         </div>
-        ${sections.map((sec) => {
-          const rows = (subj[sec.key] || []).map((it, idx) => {
-            const term = sec.type === "choice"
-              ? String(it[1]).split("|")[0]
-              : sec.type === "text"
-                ? String(it[1]).split("|")[0]
-                : Array.isArray(it[1])
-                  ? it[1].map((x) => String(x).split("|")[0]).join(", ")
-                  : String(it[1]).split("|")[0];
-            const meaning = sec.key === "sit"
-              ? applySituationalNames((it[3] || it[2] || ""), idx)
-              : (it[3] || it[2] || "");
-            return `<div class="reviewer-item">
-              <div class="reviewer-word"><span class="reviewer-tag">Term</span>${esc(term)}</div>
-              <div class="reviewer-meaning"><span class="reviewer-tag">Meaning</span><span>${esc(meaning)}</span></div>
-            </div>`;
-          }).join("");
-          return `<section class="reviewer-section"><h2>${sec.label}</h2><div class="reviewer-grid">${rows}</div></section>`;
-        }).join("")}
+        ${typeGroups.length ? `
+          <section class="reviewer-section">
+            <h2>Quick classification</h2>
+            <div class="reviewer-groups">
+              ${typeGroups.map((group) => `
+                <div class="reviewer-group">
+                  <h3>${esc(group.label)}</h3>
+                  <p class="reviewer-group-note">${esc(group.explanation)}</p>
+                  <div class="reviewer-class-list">
+                    ${group.items.map((item) => `
+                      <div class="reviewer-class-item">
+                        <div class="reviewer-class-name">${esc(item.name)}</div>
+                        <div class="reviewer-class-desc">${esc(item.description)}</div>
+                      </div>
+                    `).join("")}
+                  </div>
+                </div>
+              `).join("")}
+            </div>
+          </section>
+        ` : ""}
+        <section class="reviewer-section">
+          <div class="reviewer-grid">${allRows.map((row) => `
+            <div class="reviewer-item">
+              <div class="reviewer-word"><span class="reviewer-tag">Term</span>${esc(row.term)}</div>
+              <div class="reviewer-meaning"><span class="reviewer-tag">Meaning</span><span>${esc(row.meaning)}</span></div>
+            </div>`).join("")}
+          </div>
+        </section>
       `;
       const exit = document.getElementById("exitReviewerBtn");
       if (exit) {
