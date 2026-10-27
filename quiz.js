@@ -34,6 +34,7 @@
     st.mode = modeChoices.some((m) => m.key === st.mode) ? st.mode : "all";
     st.randomize = typeof st.randomize === "boolean" ? st.randomize : getRandomize();
     st.section = st.section || "";
+    st.reviewMode = !!st.reviewMode;
 
     const save = () => saveState(subj.id, st);
     const getVisibleSections = () => SECTIONS.filter((s) => (subj[s.key] || []).length && (st.mode === "all" || st.mode === s.key));
@@ -119,6 +120,7 @@
           <label class="mini-toggle"><input id="shuffleToggle" type="checkbox" ${st.randomize ? "checked" : ""}><span>Randomize selected questions</span></label>
         </div>
         <div id="modePicker" class="mode-picker"></div>
+        <div class="reviewer-row"><button class="btn ghost" id="reviewerBtn" type="button">View reviewer</button></div>
       </div>
       <div id="coverageNotice" class="coverage-warning" hidden></div>
       <nav class="tabs" id="tabs" role="tablist"></nav>
@@ -142,6 +144,15 @@
           </div>
         </aside>
       </div>`;
+
+    const reviewerBtn = document.getElementById("reviewerBtn");
+    if (reviewerBtn) {
+      reviewerBtn.onclick = () => {
+        st.reviewMode = true;
+        save();
+        init(subj);
+      };
+    }
 
     renderModePanel();
 
@@ -221,6 +232,44 @@
       document.querySelectorAll(".tab").forEach((b) => b.addEventListener("click", () => {
         st.section = b.dataset.k; save(); renderAll();
       }));
+    }
+
+    function renderReviewerView() {
+      const sections = SECTIONS.filter((s) => (subj[s.key] || []).length);
+      app.innerHTML = `
+        <div class="panel reviewer-header">
+          <div class="panel-h"><b>Reviewer</b></div>
+          <p class="muted">${esc(subj.title)} — key terms and plain-language explanations.</p>
+          <button class="btn ghost" id="exitReviewerBtn" type="button">← Back to quiz</button>
+        </div>
+        ${sections.map((sec) => {
+          const rows = (subj[sec.key] || []).map((it, idx) => {
+            const term = sec.type === "choice"
+              ? String(it[1]).split("|")[0]
+              : sec.type === "text"
+                ? String(it[1]).split("|")[0]
+                : Array.isArray(it[1])
+                  ? it[1].map((x) => String(x).split("|")[0]).join(", ")
+                  : String(it[1]).split("|")[0];
+            const meaning = sec.key === "sit"
+              ? applySituationalNames((it[3] || it[2] || ""), idx)
+              : (it[3] || it[2] || "");
+            return `<div class="reviewer-item">
+              <div class="reviewer-word"><span class="reviewer-tag">Term</span>${esc(term)}</div>
+              <div class="reviewer-meaning"><span class="reviewer-tag">Meaning</span><span>${esc(meaning)}</span></div>
+            </div>`;
+          }).join("");
+          return `<section class="reviewer-section"><h2>${sec.label}</h2><div class="reviewer-grid">${rows}</div></section>`;
+        }).join("")}
+      `;
+      const exit = document.getElementById("exitReviewerBtn");
+      if (exit) {
+        exit.onclick = () => {
+          st.reviewMode = false;
+          save();
+          init(subj);
+        };
+      }
     }
 
     function renderStats() {
@@ -520,6 +569,10 @@
     $("#resetAll").addEventListener("click", retryQuiz);
 
     function renderAll() {
+      if (st.reviewMode) {
+        renderReviewerView();
+        return;
+      }
       refreshSections();
       renderModePanel();
       renderTabs();
