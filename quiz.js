@@ -34,13 +34,36 @@
     st.mode = modeChoices.some((m) => m.key === st.mode) ? st.mode : "all";
     st.randomize = typeof st.randomize === "boolean" ? st.randomize : getRandomize();
     st.section = st.section || "";
+    st.sectionOrder = Array.isArray(st.sectionOrder) && st.sectionOrder.length ? st.sectionOrder : SECTIONS.map((s) => s.key);
     st.reviewMode = !!st.reviewMode;
 
     const save = () => saveState(subj.id, st);
-    const getVisibleSections = () => SECTIONS.filter((s) => (subj[s.key] || []).length && (st.mode === "all" || st.mode === s.key));
+    const visibleSectionKeys = () => SECTIONS.filter((s) => (subj[s.key] || []).length && (st.mode === "all" || st.mode === s.key)).map((s) => s.key);
+    const applySectionOrder = () => {
+      if (st.randomize && st.mode === "all") {
+        const keys = visibleSectionKeys();
+        if (keys.length > 1) {
+          st.sectionOrder = seededShuffle(keys, `${subj.id}|section-order|${Math.random()}`);
+        } else {
+          st.sectionOrder = keys;
+        }
+      } else {
+        st.sectionOrder = visibleSectionKeys();
+      }
+    };
+    const getVisibleSections = () => {
+      const visible = SECTIONS.filter((s) => (subj[s.key] || []).length && (st.mode === "all" || st.mode === s.key));
+      if (!st.randomize || st.mode !== "all") return visible;
+      const order = Array.isArray(st.sectionOrder) && st.sectionOrder.length ? st.sectionOrder : visible.map((s) => s.key);
+      return visible
+        .slice()
+        .sort((a, b) => order.indexOf(a.key) - order.indexOf(b.key));
+    };
+    applySectionOrder();
     let secs = getVisibleSections();
 
     function refreshSections() {
+      applySectionOrder();
       secs = getVisibleSections();
       if (!secs.length) {
         st.section = "";
@@ -195,6 +218,8 @@
       st.salt[sec.key] = 1 + Math.floor(Math.random() * 1e9);
     }
     function newQuiz() {
+      applySectionOrder();
+      secs = getVisibleSections();
       secs.forEach(newAttempt);
       st.rnd = st.randomize;
     }
