@@ -274,6 +274,18 @@
       const curBtn = $(".pb.cur"); if (curBtn && curBtn.scrollIntoView) curBtn.scrollIntoView({ block: "nearest" });
     }
 
+    const situationalNames = ["RVJ", "Jazzmine", "Killua", "Night", "Lilith", "Swim", "Kimmzy", "SprainedEmu", "Saanbibi", "Sanc", "Yuya", "Mitsuki", "Guren", "Shao"];
+    function applySituationalNames(text, idx) {
+      if (!text || typeof text !== "string") return text;
+      const name = situationalNames[(idx || 0) % situationalNames.length];
+      return text
+        .replace(/\bA client\b/gi, name)
+        .replace(/\bthe client\b/gi, name)
+        .replace(/\bclient\b/gi, name)
+        .replace(/\bthe patient\b/gi, name)
+        .replace(/\bpatient\b/gi, name);
+    }
+
     function renderQuestion() {
       const sec = cur(); const items = setOf(sec);
       const i = st.pos[sec.key] || 0; const oi = items[i]; const it = subj[sec.key][oi]; const a = st.ans[sec.key][oi];
@@ -281,13 +293,15 @@
         $("#qcard").innerHTML = `<div class="notice"><h2>Nothing to review here.</h2><p class="muted">Try another quiz mode or switch back to all questions.</p></div>`;
         return;
       }
+      const qText = sec.key === "sit" ? applySituationalNames(it[0], oi) : it[0];
+      const explainText = sec.key === "sit" ? applySituationalNames(it[2] || "", oi) : (it[2] || "");
       let html = `<div class="q-meta"><span class="badge">${sec.label}</span><span class="muted">Question ${i + 1} of ${items.length}</span></div>
-        <h2 class="q-text">${esc(it[0])}</h2>`;
+        <h2 class="q-text">${esc(qText)}</h2>`;
       if (!a) html += `<p class="muted hint">${sec.hint}</p>`;
 
-      if (sec.type === "choice") html += choiceHTML(sec, i, it, a);
-      else if (sec.type === "text") html += textHTML(it, a);
-      else html += listHTML(it, a);
+      if (sec.type === "choice") html += choiceHTML(sec, i, it, a, explainText);
+      else if (sec.type === "text") html += textHTML(it, a, explainText);
+      else html += listHTML(it, a, explainText);
 
       $("#qcard").innerHTML = html;
       bindQuestion(sec, oi, it, a);
@@ -299,7 +313,7 @@
       return seededShuffle([it[1]].concat(it[2]), subj.id + sec.key + i + it[0] + "|" + (st.salt[sec.key] || 0));
     }
 
-    function choiceHTML(sec, i, it, a) {
+    function choiceHTML(sec, i, it, a, explainText) {
       const opts = optionsFor(sec, i, it);
       let h = `<div class="opts">`;
       opts.forEach((o, k) => {
@@ -314,24 +328,26 @@
       });
       h += `</div>`;
       if (a) {
-        h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : "Not quite."}</b> ${a.ok ? "" : "The right answer is <b>" + esc(it[1]) + "</b>."}</div>`;
+        h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : "Not quite."}</b> ${a.ok ? "" : "The right answer is <b>" + esc(it[1]) + "</b>."}</div>
+              <div class="explain"><h4>Why is this the answer</h4><p>${esc(explainText || it[3] || "")}</p></div>`;
       }
       return h;
     }
 
-    function textHTML(it, a) {
+    function textHTML(it, a, explainText) {
       const main = it[1].split("|")[0];
       let h = `<div class="text-row"><input id="ans" type="text" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="Type your answer…" value="${a ? esc(a.val) : ""}" ${a ? "disabled" : ""}>
         ${a ? "" : `<button class="btn" id="check">Check</button>`}</div>`;
       if (!a) h += `<button class="link" id="reveal">Show answer</button>`;
       if (a) {
         h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : a.revealed ? "Answer revealed." : "Not quite."}</b>
-          ${a.ok ? "" : "The correct answer is <b>" + esc(main) + "</b>."}</div>`;
+          ${a.ok ? "" : "The correct answer is <b>" + esc(main) + "</b>."}</div>
+          <div class="explain"><h4>Why is this the answer</h4><p>${esc(explainText || it[2] || "")}</p></div>`;
       }
       return h;
     }
 
-    function listHTML(it, a) {
+    function listHTML(it, a, explainText) {
       const items = it[1]; const need = it[3] || items.length;
       let h = `<textarea id="ans" rows="6" placeholder="${need === items.length ? "List all " + need + " items" : "List any " + need + " items"}…" ${a ? "disabled" : ""}>${a ? esc(a.val) : ""}</textarea>
         ${a ? "" : `<div class="text-row"><button class="btn" id="check">Check</button></div><button class="link" id="reveal">Show answer</button>`}`;
@@ -344,7 +360,8 @@
             const cls = hit ? "ok" : allReq ? "bad" : "neutral";
             return `<li class="${cls}"><span>${hit ? "✓" : allReq ? "✕" : "•"}</span>${esc(x.split("|")[0])}</li>`;
           }).join("")}</ul>
-          ${allReq ? "" : `<p class="muted small">Any ${need} of the items above are accepted.</p>`}`;
+          ${allReq ? "" : `<p class="muted small">Any ${need} of the items above are accepted.</p>`}
+          <div class="explain"><h4>Why is this the answer</h4><p>${esc(explainText || it[2] || "")}</p></div>`;
       }
       return h;
     }
@@ -374,19 +391,7 @@
     }
 
     function bindQuestion(sec, oi, it, a) {
-      const record = async (obj) => {
-        st.ans[sec.key][oi] = obj;
-        save();
-        renderTabs();
-        renderStats();
-        renderPalette();
-        renderQuestion();
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        const proceed = await showAnswerFeedback(sec, it, obj);
-        if (proceed) {
-          go(1);
-        }
-      };
+      const record = (obj) => { st.ans[sec.key][oi] = obj; save(); renderTabs(); renderStats(); renderPalette(); renderQuestion(); };
       if (sec.type === "choice" && !a) {
         const opts = optionsFor(sec, st.pos[sec.key], it);
         document.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
