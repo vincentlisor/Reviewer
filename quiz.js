@@ -270,7 +270,6 @@
       }).join("");
       document.querySelectorAll(".pb").forEach((b) => b.addEventListener("click", () => {
         st.pos[sec.key] = +b.dataset.i; save(); renderQuestion(); renderPalette();
-        window.scrollTo({ top: 0, behavior: "smooth" });
       }));
       const curBtn = $(".pb.cur"); if (curBtn && curBtn.scrollIntoView) curBtn.scrollIntoView({ block: "nearest" });
     }
@@ -315,8 +314,7 @@
       });
       h += `</div>`;
       if (a) {
-        h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : "Not quite."}</b> ${a.ok ? "" : "The right answer is <b>" + esc(it[1]) + "</b>."}</div>
-              <div class="explain"><h4>Why this is the answer</h4><p>${esc(it[3] || "")}</p></div>`;
+        h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : "Not quite."}</b> ${a.ok ? "" : "The right answer is <b>" + esc(it[1]) + "</b>."}</div>`;
       }
       return h;
     }
@@ -328,8 +326,7 @@
       if (!a) h += `<button class="link" id="reveal">Show answer</button>`;
       if (a) {
         h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : a.revealed ? "Answer revealed." : "Not quite."}</b>
-          ${a.ok ? "" : "The correct answer is <b>" + esc(main) + "</b>."}</div>
-          <div class="explain"><h4>Why this is the answer</h4><p>${esc(it[2] || "")}</p></div>`;
+          ${a.ok ? "" : "The correct answer is <b>" + esc(main) + "</b>."}</div>`;
       }
       return h;
     }
@@ -347,14 +344,49 @@
             const cls = hit ? "ok" : allReq ? "bad" : "neutral";
             return `<li class="${cls}"><span>${hit ? "✓" : allReq ? "✕" : "•"}</span>${esc(x.split("|")[0])}</li>`;
           }).join("")}</ul>
-          ${allReq ? "" : `<p class="muted small">Any ${need} of the items above are accepted.</p>`}
-          <div class="explain"><h4>Notes</h4><p>${esc(it[2] || "")}</p></div>`;
+          ${allReq ? "" : `<p class="muted small">Any ${need} of the items above are accepted.</p>`}`;
       }
       return h;
     }
 
+    function showAnswerFeedback(sec, it, a) {
+      const need = it[3] || (Array.isArray(it[1]) ? it[1].length : 0);
+      const isList = sec.type === "list";
+      const ok = isList ? a.found >= need : a.ok;
+      const title = a.revealed ? "Answer revealed" : (ok ? "Correct!" : "Not quite.");
+      const text = isList
+        ? `You got ${Math.min(a.found, need)} of ${need} items correct.`
+        : a.revealed
+          ? "This is the correct answer."
+          : (ok ? "Nice work — that is the correct answer." : "The correct answer is " + esc(it[1].split("|")[0]) + ".");
+      const points = [
+        isList ? "Explanation: " + (it[2] || "Review the notes above.") : (it[3] || it[2] || "Review the explanation below."),
+        sec.type === "choice" ? "Correct answer: " + it[1] : ""
+      ].filter(Boolean);
+      return confirmModal({
+        icon: a.revealed ? "👀" : (ok ? "✓" : "✕"),
+        title,
+        text,
+        points,
+        ok: "Continue",
+        cancel: "Review question"
+      });
+    }
+
     function bindQuestion(sec, oi, it, a) {
-      const record = (obj) => { st.ans[sec.key][oi] = obj; save(); renderTabs(); renderStats(); renderPalette(); renderQuestion(); };
+      const record = async (obj) => {
+        st.ans[sec.key][oi] = obj;
+        save();
+        renderTabs();
+        renderStats();
+        renderPalette();
+        renderQuestion();
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+        const proceed = await showAnswerFeedback(sec, it, obj);
+        if (proceed) {
+          go(1);
+        }
+      };
       if (sec.type === "choice" && !a) {
         const opts = optionsFor(sec, st.pos[sec.key], it);
         document.querySelectorAll(".opt").forEach((b) => b.addEventListener("click", () => {
@@ -387,7 +419,6 @@
       const sec = cur(); const n = setOf(sec).length;
       const j = Math.max(0, Math.min(n - 1, (st.pos[sec.key] || 0) + d));
       st.pos[sec.key] = j; save(); renderQuestion(); renderPalette();
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
     $("#prev").addEventListener("click", () => go(-1));
     $("#next").addEventListener("click", () => go(1));
@@ -395,7 +426,7 @@
       const sec = cur(); const n = setOf(sec).length; const start = st.pos[sec.key] || 0;
       for (let k = 1; k <= n; k++) {
         const j = (start + k) % n;
-        if (!st.ans[sec.key][setOf(sec)[j]]) { st.pos[sec.key] = j; save(); renderQuestion(); renderPalette(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+        if (!st.ans[sec.key][setOf(sec)[j]]) { st.pos[sec.key] = j; save(); renderQuestion(); renderPalette(); return; }
       }
       alert("You have answered every question in this section. 🎉");
     });
@@ -447,7 +478,6 @@
       newQuiz(); save();
       if ($("#results").open) $("#results").close();
       renderAll();
-      window.scrollTo({ top: 0, behavior: "smooth" });
     }
     $("#retryBtn").addEventListener("click", retryQuiz);
 
