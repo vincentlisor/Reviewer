@@ -531,8 +531,9 @@
       });
       h += `</div>`;
       if (a) {
-        h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : "Not quite."}</b> ${a.ok ? "" : "The right answer is <b>" + esc(it[1]) + "</b>."}</div>
-              <div class="explain"><h4>Why is this the answer</h4><p>${esc(explainText || it[3] || "")}</p></div>`;
+        const reason = explainText || it[3] || "This is the key concept to remember.";
+        h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : "Not quite."}</b> ${a.ok ? "" : "The correct answer is <b>" + esc(it[1]) + "</b> because " + esc(reason) + "."}</div>
+              <div class="explain"><h4>Why is this the answer</h4><p>${esc(reason)}</p></div>`;
       }
       return h;
     }
@@ -543,9 +544,10 @@
         ${a ? "" : `<button class="btn" id="check">Check</button>`}</div>`;
       if (!a) h += `<button class="link" id="reveal">Show answer</button>`;
       if (a) {
+        const reason = explainText || it[2] || "This is the key concept to remember.";
         h += `<div class="feedback ${a.ok ? "ok" : "bad"}"><b>${a.ok ? "Correct!" : a.revealed ? "Answer revealed." : "Not quite."}</b>
-          ${a.ok ? "" : "The correct answer is <b>" + esc(main) + "</b>."}</div>
-          <div class="explain"><h4>Why is this the answer</h4><p>${esc(explainText || it[2] || "")}</p></div>`;
+          ${a.ok ? "" : "The correct answer is <b>" + esc(main) + "</b> because " + esc(reason) + "."}</div>
+          <div class="explain"><h4>Why is this the answer</h4><p>${esc(reason)}</p></div>`;
       }
       return h;
     }
@@ -556,15 +558,16 @@
         ${a ? "" : `<div class="text-row"><button class="btn" id="check">Check</button></div><button class="link" id="reveal">Show answer</button>`}`;
       if (a) {
         const allReq = need === items.length;
+        const reason = explainText || it[2] || "This is the key concept to remember.";
         h += `<div class="feedback ${a.found >= need ? "ok" : a.found > 0 ? "part" : "bad"}"><b>${Math.min(a.found, need)} of ${need} correct.</b>
-          ${a.found >= need ? " Complete!" : ""}</div>
+          ${a.found >= need ? " Complete!" : a.found > 0 ? " The correct response is based on the important items because " + esc(reason) + "." : " The correct answer is because " + esc(reason) + "."}</div>
           <ul class="checklist">${items.map((x, k) => {
             const hit = a.hits[k];
             const cls = hit ? "ok" : allReq ? "bad" : "neutral";
             return `<li class="${cls}"><span>${hit ? "✓" : allReq ? "✕" : "•"}</span>${esc(x.split("|")[0])}</li>`;
           }).join("")}</ul>
           ${allReq ? "" : `<p class="muted small">Any ${need} of the items above are accepted.</p>`}
-          <div class="explain"><h4>Why is this the answer</h4><p>${esc(explainText || it[2] || "")}</p></div>`;
+          <div class="explain"><h4>Why is this the answer</h4><p>${esc(reason)}</p></div>`;
       }
       return h;
     }
