@@ -479,7 +479,14 @@
         return;
       }
       const qText = sec.key === "sit" ? applySituationalNames(it[0], oi) : it[0];
-      const explainText = sec.key === "sit" ? applySituationalNames(it[2] || "", oi) : (it[2] || "");
+      let explainText = "";
+      if (sec.type === "choice") {
+        explainText = sec.key === "sit" ? applySituationalNames((it[3] || it[2] || ""), oi) : (it[3] || "");
+      } else if (sec.type === "text") {
+        explainText = it[2] || "";
+      } else {
+        explainText = it[2] || "";
+      }
       let html = `<div class="q-meta"><span class="badge">${sec.label}</span><span class="muted">Question ${i + 1} of ${items.length}</span></div>
         <h2 class="q-text">${esc(qText)}</h2>`;
       if (!a) html += `<p class="muted hint">${sec.hint}</p>`;
