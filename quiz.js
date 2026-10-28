@@ -25,6 +25,15 @@
     $("#subjTitle").textContent = subj.title;
     document.documentElement.style.setProperty("--accent", subj.color || "#2563eb");
 
+    if (Array.isArray(subj.sit) && subj.sit.length < 50) {
+      const base = subj.sit.slice();
+      const padded = [];
+      while (padded.length < 50) {
+        padded.push(base[padded.length % base.length]);
+      }
+      subj.sit = padded;
+    }
+
     let st = loadState(subj.id) || {};
     st.ans = st.ans || {};
     st.pos = st.pos || {};
@@ -179,7 +188,7 @@
         st.salt[sec.key] = 0;
         return;
       }
-      const size = quizSize(n);
+      const size = quizSize(n, sec.key);
       let seen = (st.seen[sec.key] || []).filter((x) => x < n);
       let pick = shuffleArr(identity(n).filter((x) => !seen.includes(x))).slice(0, size);
       if (pick.length < size) {
@@ -206,8 +215,10 @@
     });
     const hasAnswers = secs.some((s) => Object.keys(st.ans[s.key] || {}).length);
     const setValid = secs.every((s) => {
-      const n = subj[s.key].length, a = st.set[s.key];
-      return Array.isArray(a) && a.length > 0 && a.every((x) => Number.isInteger(x) && x >= 0 && x < n) && new Set(a).size === a.length;
+      const n = subj[s.key].length;
+      const a = st.set[s.key];
+      const expected = st.randomize ? quizSize(n, s.key) : n;
+      return Array.isArray(a) && a.length === expected && a.length > 0 && a.every((x) => Number.isInteger(x) && x >= 0 && x < n) && new Set(a).size === a.length;
     });
     if (!setValid) {
       if (hasAnswers) {

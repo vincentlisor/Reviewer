@@ -126,7 +126,10 @@
   window.setRandomize = function (on) {
     try { localStorage.setItem("pharmreviewer:randomize", on ? "1" : "0"); } catch (e) {}
   };
-  window.quizSize = (n) => Math.min(n, Math.max(5, Math.ceil(n * QUIZ_FRACTION)));
+  window.quizSize = (n, sectionKey) => {
+    if (sectionKey === "sit") return Math.max(50, Math.min(n, 50));
+    return Math.min(n, Math.max(5, Math.ceil(n * QUIZ_FRACTION)));
+  };
 
   /* ---------- scoring ---------- */
   window.pointsOf = function (type, a) {
