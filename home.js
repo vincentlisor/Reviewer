@@ -21,7 +21,7 @@
     const rnd = getRandomize();
     const counts = SECTIONS.map((sec) => {
       const n = (s[sec.key] || []).length;
-      return `<div><b>${rnd ? quizSize(n, sec.key) : n}</b><span>${sec.label}</span></div>`;
+      return `<div><b>${n}</b><span>${sec.label}</span></div>`;
     }).join("");
     return `
     <a class="card" href="quiz.html?s=${encodeURIComponent(s.id)}" style="--accent:${esc(s.color || "#2563eb")}">

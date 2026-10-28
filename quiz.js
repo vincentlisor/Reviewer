@@ -25,15 +25,6 @@
     $("#subjTitle").textContent = subj.title;
     document.documentElement.style.setProperty("--accent", subj.color || "#2563eb");
 
-    if (Array.isArray(subj.sit) && subj.sit.length < 50) {
-      const base = subj.sit.slice();
-      const padded = [];
-      while (padded.length < 50) {
-        padded.push(base[padded.length % base.length]);
-      }
-      subj.sit = padded;
-    }
-
     let st = loadState(subj.id) || {};
     st.ans = st.ans || {};
     st.pos = st.pos || {};
@@ -310,7 +301,12 @@
       if (lower.includes("digoxin") || lower.includes("milrinone")) return genericMap["cardiac glycosides"];
       if (lower.includes("finasteride") || lower.includes("dutasteride") || lower.includes("5-alpha")) return genericMap["5-alpha reductase inhibitors"];
       if (lower.includes("tamsulosin") || lower.includes("alfuzosin") || lower.includes("silodosin")) return genericMap["alpha-adrenergic blockers"];
-      return "This group includes the major drug examples used to manage the condition and should be reviewed together as a set.";
+      if (lower.includes("oral") || lower.includes("anal") || lower.includes("phallic")) return "Freud's psychosexual stages guide age-specific nursing: oral stimulation, toilet training, accepting genital exploration, supporting learning, and allowing relationship talk.";
+      if (lower.includes("trust") || lower.includes("autonomy") || lower.includes("initiative") || lower.includes("industry") || lower.includes("identity")) return "Erikson's psychosocial crises describe the developmental task the nurse should support at each age.";
+      if (lower.includes("sensorimotor") || lower.includes("preoperational") || lower.includes("concrete") || lower.includes("formal")) return "Piaget's stages describe how children think — from reflexes and senses to abstract hypothetical reasoning.";
+      if (lower.includes("preconventional") || lower.includes("conventional") || lower.includes("kohlberg") || lower.includes("moral")) return "Kohlberg's levels explain why children obey — punishment, being 'good,' social order, or internalized ethics.";
+      if (lower.includes("parallel") || lower.includes("associative") || lower.includes("cooperative") || lower.includes("onlooker") || lower.includes("solitary")) return "Play type should match development: watching, side-by-side, loosely together, or organized toward a goal.";
+      return "This group includes the major categories to review together as a set.";
     }
 
     function buildTypeGroups(subj) {
@@ -373,12 +369,25 @@
         })
       );
 
+      const noteBlocks = Array.isArray(subj.notes) ? subj.notes : [];
       app.innerHTML = `
         <div class="panel reviewer-header">
           <div class="panel-h"><b>Reviewer</b></div>
-          <p class="muted">${esc(subj.title)} — concise study notes and explanations.</p>
+          <p class="muted">${esc(subj.title)} — lecture notes first, then quiz terms and explanations so the whole PDF is covered.</p>
           <button class="btn ghost" id="exitReviewerBtn" type="button">← Back to quiz</button>
         </div>
+        ${noteBlocks.length ? noteBlocks.map((n) => `
+          <section class="reviewer-section">
+            <h2>${esc(n.heading || "Notes")}</h2>
+            <div class="reviewer-grid">${(n.items || []).map((row) => {
+              const term = Array.isArray(row) ? row[0] : (row.term || "");
+              const meaning = Array.isArray(row) ? row[1] : (row.meaning || "");
+              return `<div class="reviewer-item">
+                <div class="reviewer-word"><span class="reviewer-tag">Topic</span>${esc(term)}</div>
+                <div class="reviewer-meaning"><span class="reviewer-tag">From the lecture</span><span>${esc(meaning)}</span></div>
+              </div>`;
+            }).join("")}</div>
+          </section>`).join("") : ""}
         ${typeGroups.length ? `
           <section class="reviewer-section">
             <h2>Quick classification</h2>

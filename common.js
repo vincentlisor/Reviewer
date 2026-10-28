@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  const REVIEWER_FILES = ["cardio.js", "renal.js"];
+  const REVIEWER_FILES = ["cardio.js", "renal.js", "newsubject.js", "pediatricphysical2.js", "growthdevelopment.js", "preschool.js", "infant.js"];
 
   window.REVIEWERS = window.REVIEWERS || [];
 
@@ -119,7 +119,7 @@
   };
 
   /* ---------- randomize setting (set on the home page) ---------- */
-  window.QUIZ_FRACTION = 0.4;   // share of each question bank used in one randomized attempt
+  window.QUIZ_FRACTION = 1;   // use the full bank so the homework/reviewer counts match the bank size
   window.getRandomize = function () {
     try { return localStorage.getItem("pharmreviewer:randomize") === "1"; } catch (e) { return false; }
   };
@@ -127,8 +127,8 @@
     try { localStorage.setItem("pharmreviewer:randomize", on ? "1" : "0"); } catch (e) {}
   };
   window.quizSize = (n, sectionKey) => {
-    if (sectionKey === "sit") return Math.max(50, Math.min(n, 50));
-    return Math.min(n, Math.max(5, Math.ceil(n * QUIZ_FRACTION)));
+    // Keep all questions in each selected bank so the number shown on the card matches the quiz itself.
+    return n;
   };
 
   /* ---------- scoring ---------- */

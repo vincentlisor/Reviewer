@@ -8,6 +8,18 @@
   color: "#0891b2",
   description: "Diuretics (thiazide, loop, potassium-sparing, osmotic, CAIs) and drugs affecting the urinary tract, bladder and prostate.",
   topics: ["Thiazides", "Loop diuretics", "K-sparing", "Osmotic", "UTI drugs", "Antispasmodics", "BPH"],
+  notes: [
+    { heading: "Diuretic classes (NCM 106 Part 2)", items: [
+      ["Five classes", "Thiazide, loop (high-ceiling), carbonic anhydrase inhibitors, potassium-sparing, osmotic."],
+      ["Figure adverse effects", "Hypokalemia (distal K+ loss), hypercalcemia (↓ Ca excretion — thiazides), hyperuricemia/gout, hyperglycemia with prolonged use."]
+    ]},
+    { heading: "Urinary tract drugs", items: [
+      ["Anti-infectives", "Fosfomycin, nitrofurantoin, trimethoprim, cipro/ofloxacin/levofloxacin, cefixime, TMP-SMX (Bactrim). Some acidify urine. Nitrofurantoin preferred in pregnancy. Full 7-day course; 8–10 glasses of water; avoid urine-alkalinizers."],
+      ["Antispasmodics", "Anticholinergics relax detrusor; mirabegron is a beta-3 agonist; trospium for OAB (incontinence, urgency, frequency)."],
+      ["Analgesic / protectant", "Phenazopyridine: topical dye analgesic. Pentosan: heparin-like bladder protectant for interstitial cystitis."],
+      ["BPH", "Alpha-1 blockers relax prostate/bladder neck; finasteride/dutasteride block testosterone→DHT. Not cancer but evaluate. Limit fluids ~2 qt/day; avoid alcohol/caffeine; void q3h; stay active and warm."]
+    ]}
+  ],
 
   mcq: [
     ["Potassium loss at the distal tubule from diuretics can cause:", "Hypokalemia", ["Hyperkalemia", "Hypernatremia", "Hypermagnesemia"], "Thiazides and loop diuretics waste potassium; monitor potassium and ECG."],
@@ -109,7 +121,12 @@
     ["Which diuretic increases the risk of hyperkalemia when combined with potassium supplements?", "Potassium-sparing diuretic", ["Thiazide", "Loop", "Osmotic"], "Never combine without monitoring."],
     ["Which of the following drugs is a bladder protectant?", "Pentosan polysulfate sodium", ["Tolterodine", "Mirabegron", "Doxazosin"], "It coats the bladder wall and limits irritation."],
     ["Which BPH drug is taken after the same meal each day?", "Tamsulosin", ["Finasteride", "Oxybutynin", "Pentosan"], "Taken 30 minutes after the same meal daily."],
-    ["The common UTI anti-infective that is a fluoroquinolone is:", "Ciprofloxacin", ["Nitrofurantoin", "Fosfomycin", "Trimethoprim"], "Also ofloxacin and levofloxacin."]
+    ["The common UTI anti-infective that is a fluoroquinolone is:", "Ciprofloxacin", ["Nitrofurantoin", "Fosfomycin", "Trimethoprim"], "Also ofloxacin and levofloxacin."],
+    ["The usual UTI anti-infective treatment course in the lecture is:", "A 7-day course, taken in full as ordered", ["Stop after one dose always", "Take only when feverish", "A 24-hour course for all drugs"], "Helps flush infection and prevent resistance."],
+    ["Report which UTI-drug problems to the provider?", "Painful urination, skin rash or itching, severe GI upset that prevents fluids, and very painful urination", ["Only bluish urine from triamterene", "Only orange urine from phenazopyridine as an emergency always", "Mild expected hunger"], "Dose adjustment or toxicity workup may be needed."],
+    ["Trospium is specifically indicated for:", "Overactive bladder with incontinence, urgency, and frequency", ["BPH shrinkage only", "Interstitial cystitis coating only", "Osmotic diuresis"], "It blocks muscarinic receptors and reduces bladder muscle tone."],
+    ["Pentosan is described as a:", "Heparin-like compound with anticoagulant and fibrinolytic effects that buffers the bladder wall", ["Loop diuretic", "Thiazide", "Beta blocker"], "Used for pain of interstitial cystitis."],
+    ["Clients on 5-alpha reductase inhibitors should report:", "Inability to pass urine, groin pain, fever, and weakness", ["Only harmless bluish urine", "Only a dry cough", "Only tinnitus"], "Nursing considerations for BPH drugs."]
   ],
 
   ident: [
@@ -208,6 +225,8 @@
     ["A client with glaucoma is prescribed an anticholinergic antispasmodic. The nurse should:", "Report concerns since it may raise intraocular pressure", ["Give it as ordered without question", "Double the dose", "Give it with milk"], "Glaucoma is a contraindication."],
     ["A client on phenazopyridine reports orange-red urine and is worried. The nurse should:", "Explain it is a dye effect and may stain clothes and contacts", ["Stop the drug and send to ED", "Tell them it means bleeding", "Increase the dose"], "Anticipatory teaching reduces anxiety."],
     ["A client on pentosan polysulfate has new bruising and petechiae. The nurse should:", "Report possible bleeding and expect coagulation studies", ["Give extra doses", "Ignore it", "Apply heat"], "Pentosan has heparin-like effects."],
-    ["A man starting finasteride asks about his wife handling the tablets. The nurse teaches:", "Women who are or may become pregnant should not touch broken or crushed tablets", ["It is safe for everyone to touch", "Only men may touch it", "Tablets are harmless to pregnancy"], "The drug is absorbed through the skin and can harm a fetus."]
+    ["A man starting finasteride asks about his wife handling the tablets. The nurse teaches:", "Women who are or may become pregnant should not touch broken or crushed tablets", ["It is safe for everyone to touch", "Only men may touch it", "Tablets are harmless to pregnancy"], "The drug is absorbed through the skin and can harm a fetus."],
+    ["A client on nitrofurantoin has a rash and cannot keep fluids down. The nurse should:", "Report rash and severe GI upset that prevents adequate fluid intake", ["Say this is always harmless", "Double the dose", "Add baking soda to alkalinize urine"], "Lecture adverse-effect teaching."],
+    ["A client with BPH sits still in the cold and drinks soda at bedtime. Teaching should include:", "Stay active and warm; cold and inactivity worsen symptoms; limit evening fluids and caffeine", ["Sit still in the cold to shrink the prostate", "Drink more soda at night", "Hold urine all day"], "Lifestyle tips from the lecture."]
   ]
 });
