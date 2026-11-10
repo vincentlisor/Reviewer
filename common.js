@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  const REVIEWER_FILES = ["cardio.js", "renal.js", "newsubject.js", "pediatricphysical2.js", "growthdevelopment.js", "preschool.js", "infant.js"];
+  const REVIEWER_FILES = ["cardio.js", "renal.js", "newsubject.js", "pediatricphysical2.js", "growthdevelopment.js", "preschool.js", "infant.js", "nutritionalgenomics.js"];
 
   window.REVIEWERS = window.REVIEWERS || [];
 
