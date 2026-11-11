@@ -4,7 +4,7 @@
 (function () {
   "use strict";
 
-  const REVIEWER_FILES = ["cardio.js", "renal.js", "newsubject.js", "pediatricphysical2.js", "growthdevelopment.js", "preschool.js", "toddler.js", "infant.js", "nutritionalgenomics.js", "ethicalissues.js", "religionfilipino.js", "nutritiondiet.js", "dietarymodifications.js", "nutritionsupport.js", "newborncare.js", "newbornassessment.js"];
+  const REVIEWER_FILES = ["cardio.js", "renal.js", "newsubject.js", "pediatricphysical2.js", "growthdevelopment.js", "preschool.js", "toddler.js", "infant.js", "nutritionalgenomics.js", "ethicalissues.js", "religionfilipino.js", "nutritiondiet.js", "dietarymodifications.js", "nutritionsupport.js", "newborncare.js", "newbornassessment.js", "pharmaendterm.js", "pharmaendterm2.js", "pharmaendterm3.js", "animalbite.js", "tapeworm.js", "dohprograms.js", "publichealthlaws.js"];
 
   window.REVIEWERS = window.REVIEWERS || [];
 
